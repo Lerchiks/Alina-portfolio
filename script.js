@@ -92,3 +92,23 @@ function openPortfolio() {
 overlay.addEventListener('click', () => {
     portfolioModal.classList.remove('open');
 });
+
+const imageModal = document.getElementById('imageModal');
+const imageModalImg = document.getElementById('imageModalImg');
+const imageOverlay = imageModal.querySelector('.image-overlay');
+
+// добавляем обработчик клика к изображениям
+portfolioGrid.addEventListener('click', (e) => {
+    if (e.target.tagName !== 'IMG') return;
+
+    // ⚠️ только для больших экранов
+    if (window.innerWidth < 1200) return;
+
+    imageModalImg.src = e.target.src;
+    imageModal.classList.add('open');
+});
+
+// закрытие фуллскрина
+imageOverlay.addEventListener('click', () => {
+    imageModal.classList.remove('open');
+});
