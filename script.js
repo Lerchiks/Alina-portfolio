@@ -117,27 +117,27 @@ const uploadBtn = document.getElementById('uploadBtn');
 if (window.location.search.includes("admin=143214")) {
   uploadBtn.style.display = "block";
 }
-
 uploadBtn.addEventListener('click', async () => {
-    const res = await fetch('/api/sign');
-    const data = await res.json();
+  const res = await fetch('/api/sign');
+  const data = await res.json();
 
-    cloudinary.openUploadWidget({
-        cloudName: data.cloudName,
-        uploadSignatureTimestamp: data.timestamp,
-        uploadSignature: data.signature,
-        folder: data.folder,
-        multiple: true
-    }, (error, result) => {
+  cloudinary.openUploadWidget({
+    cloudName: data.cloudName,
+    folder: data.folder,
+    multiple: true,
+    timestamp: data.timestamp,
+    signature: data.signature,
+    apiKey: data.apiKey  // обязательно передаем apiKey
+  }, (error, result) => {
     if (!error && result.event === "success") {
-        const portfolioGrid = document.querySelector('.portfolio-grid');
-        const img = document.createElement("img");
-        img.src = result.info.secure_url;
-        img.loading = "lazy";
-        portfolioGrid.appendChild(img);
+      const portfolioGrid = document.querySelector('.portfolio-grid');
+      const img = document.createElement("img");
+      img.src = result.info.secure_url;
+      img.loading = "lazy";
+      portfolioGrid.appendChild(img);
     }
-    });
-
+  });
 });
+
 
 
