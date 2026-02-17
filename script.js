@@ -90,13 +90,13 @@ const portfolioModal = document.getElementById('portfolioModal');
 const overlay = portfolioModal.querySelector('.modal-overlay');
 
 // Populate portfolio grid
-portfolioImages.forEach(imgSrc => {
-    const img = document.createElement('img');
-    img.src = imgSrc;
-    img.alt = 'Portfolio image';
-    img.loading = 'lazy';
-    portfolioGrid.appendChild(img);
-});
+// portfolioImages.forEach(imgSrc => {
+//     const img = document.createElement('img');
+//     img.src = imgSrc;
+//     img.alt = 'Portfolio image';
+//     img.loading = 'lazy';
+//     portfolioGrid.appendChild(img);
+// });
 
 const portfolio = document.getElementById('portfolio');
 

@@ -6,10 +6,12 @@ export default async function handler(req, res) {
   const API_SECRET = process.env.CLOUDINARY_API_SECRET;
   const FOLDER = "AlinaGallery";
 
-  // basic auth для Cloudinary Admin API
-  const auth = Buffer.from(`${API_KEY}:${API_SECRET}`).toString("base64");
+  if (!CLOUD_NAME || !API_KEY || !API_SECRET) {
+    return res.status(500).json({ error: "Missing Cloudinary env variables" });
+  }
 
   try {
+    const auth = Buffer.from(`${API_KEY}:${API_SECRET}`).toString("base64");
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/resources/image?prefix=${FOLDER}`,
       {
@@ -21,7 +23,10 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // вернем массив URL изображений
+    if (!data.resources) {
+      return res.status(500).json({ error: "No resources returned from Cloudinary" });
+    }
+
     const images = data.resources.map(img => img.secure_url);
 
     res.status(200).json({ images });
