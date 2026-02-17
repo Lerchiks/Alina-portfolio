@@ -13,8 +13,10 @@ export default function handler(req, res) {
   }
 
   // формируем строку для подписи
-  const params_to_sign = `folder=${folder}&timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`;
-  const signature = crypto.createHash("sha1").update(params_to_sign).digest("hex");
+  const params_to_sign = `folder=${folder}&source=uw&timestamp=${timestamp}`;
+  const signature = crypto.createHash("sha1")
+    .update(params_to_sign + process.env.CLOUDINARY_API_SECRET)
+    .digest("hex");
 
   res.status(200).json({
     timestamp,
