@@ -123,11 +123,11 @@ uploadBtn.addEventListener('click', async () => {
 
   cloudinary.openUploadWidget({
     cloudName: data.cloudName,
-    folder: data.folder,
-    multiple: true,
-    timestamp: data.timestamp,
-    signature: data.signature,
-    apiKey: data.apiKey  // обязательно передаем apiKey
+  apiKey: data.apiKey,
+  uploadSignature: data.signature,          // ← rename!
+  uploadSignatureTimestamp: data.timestamp, // ← rename!
+  folder: data.folder,
+  multiple: true
   }, (error, result) => {
     if (!error && result.event === "success") {
       const portfolioGrid = document.querySelector('.portfolio-grid');
