@@ -11,9 +11,11 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Basic Auth для Cloudinary Admin API
     const auth = Buffer.from(`${API_KEY}:${API_SECRET}`).toString("base64");
+
     const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/resources/image?prefix=${FOLDER}`,
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/resources/image?prefix=${FOLDER}/`,
       {
         headers: {
           Authorization: `Basic ${auth}`
