@@ -1,53 +1,34 @@
 import { v2 as cloudinary } from 'cloudinary';
 
+// Выносим конфиг прямо внутрь хендлера для надежности
 export default async function handler(req, res) {
-  // Настройка Cloudinary
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true // Добавьте это
   });
 
   const FOLDER = "AlinaGallery";
 
-  if (!process.env.CLOUDINARY_CLOUD_NAME || 
-      !process.env.CLOUDINARY_API_KEY || 
-      !process.env.CLOUDINARY_API_SECRET) {
-    return res.status(500).json({ error: "Missing Cloudinary env variables" });
-  }
+  // Логируем для отладки (эти логи вы увидите в панели Vercel -> Logs)
+  console.log("Cloud Name:", process.env.CLOUDINARY_CLOUD_NAME);
 
   try {
-    // Получаем список изображений из указанной папки
     const result = await cloudinary.api.resources({
       type: 'upload',
       prefix: FOLDER,
-      max_results: 500 // максимальное количество результатов
+      max_results: 100 
     });
 
-    if (!result.resources || result.resources.length === 0) {
-      return res.status(200).json({ images: [] });
-    }
-
-    // Форматируем результат - получаем массив URL с оптимизациями
-    const images = result.resources.map(img => ({
-      url: img.secure_url,
-      public_id: img.public_id,
-      width: img.width,
-      height: img.height,
-      format: img.format,
-      created_at: img.created_at
-    }));
-
-    res.status(200).json({ 
-      images,
-      total: result.resources.length 
+    // Если всё ок, возвращаем данные
+    return res.status(200).json({ 
+      images: result.resources.map(img => ({ url: img.secure_url })) 
     });
-    
+
   } catch (err) {
-    console.error("Error fetching from Cloudinary:", err);
-    res.status(500).json({ 
-      error: "Cannot fetch gallery from Cloudinary", 
-      details: err.message 
-    });
+    console.error("Cloudinary Error:", err);
+    // Возвращаем JSON даже при ошибке, чтобы фронтенд не падал с "Unexpected token A"
+    return res.status(500).json({ error: err.message });
   }
 }
