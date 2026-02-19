@@ -8,34 +8,29 @@ export default async function handler(req, res) {
     secure: true 
   });
 
-  // Укажи здесь тег, который ты присвоила фотографиям
-  const TAG = "AlinaGallery"; 
+  const FOLDER = "AlinaGallery"; // Убедись, что в Cloudinary папка называется именно так
 
   try {
-    // Используем метод поиска по тегу
-    const result = await cloudinary.api.resources_by_tag(TAG, {
+    const result = await cloudinary.api.resources({
+      type: 'upload',
+      prefix: FOLDER,     // Ищем только файлы с префиксом папки
       max_results: 100,
-      // Это важно, чтобы получить все детали файла
+      direction: 'desc'   // Новые фото будут в начале
     });
 
-    const images = result.resources.map(img => {
-      // Оптимизируем URL (авто-формат, авто-качество)
-      const optimizedUrl = img.secure_url.replace(
-        '/upload/', 
-        '/upload/f_auto,q_auto,w_1000,c_limit/'
-      );
-      
-      return {
-        url: optimizedUrl,
-        public_id: img.public_id
-      };
-    });
+    // Формируем список оптимизированных ссылок
+    const images = result.resources.map(img => ({
+      url: img.secure_url.replace('/upload/', '/upload/f_auto,q_auto,w_1000,c_limit/'),
+      public_id: img.public_id
+    }));
 
+    // Кэширование для быстрой работы
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
+    
     return res.status(200).json({ images });
 
   } catch (err) {
-    console.error("Cloudinary Tag Error:", err);
+    console.error("Cloudinary Folder Error:", err);
     return res.status(500).json({ error: err.message });
   }
 }
