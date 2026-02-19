@@ -11,14 +11,16 @@ export default async function handler(req, res) {
   const FOLDER = "AlinaGallery";
 
   try {
+    // Убрали type: 'upload', оставили только префикс папки
     const result = await cloudinary.api.resources({
       prefix: FOLDER,
-      max_results: 100 
+      max_results: 100,
+      // Добавляем context: true, если вдруг ты хранишь описания в метаданных
     });
 
-    // 1. Сначала подготавливаем данные
+    // Подготовка оптимизированных данных
     const images = result.resources.map(img => {
-      // Оптимизация: f_auto (формат), q_auto (сжатие), w_800 (ширина)
+      // Генерируем URL с авто-форматом и качеством
       const optimizedUrl = img.secure_url.replace(
         '/upload/', 
         '/upload/f_auto,q_auto,w_800,c_limit/'
@@ -32,9 +34,9 @@ export default async function handler(req, res) {
       };
     });
 
-    // 2. Добавляем кэширование (опционально, для скорости)
+    // Кэширование для Vercel (Edge Network)
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
-    // 3. Отправляем готовый массив
+    
     return res.status(200).json({ images });
 
   } catch (err) {
