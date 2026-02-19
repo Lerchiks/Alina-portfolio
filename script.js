@@ -135,34 +135,5 @@ imageOverlay.addEventListener('click', () => {
 });
 
 
-// upload
-const uploadBtn = document.getElementById('uploadBtn');
-
-// Показываем кнопку только если ?admin=1
-if (window.location.search.includes("admin=143214")) {
-  uploadBtn.style.display = "block";
-}
-uploadBtn.addEventListener('click', async () => {
-  const res = await fetch('/api/sign');
-  const data = await res.json();
-
-  cloudinary.openUploadWidget({
-    cloudName: data.cloudName,
-    apiKey: data.apiKey,
-    uploadSignature: data.signature,          // ← rename!
-    uploadSignatureTimestamp: data.timestamp, // ← rename!
-    folder: data.folder,
-    multiple: true
-  }, (error, result) => {
-    if (!error && result.event === "success") {
-      const portfolioGrid = document.querySelector('.portfolio-grid');
-      const img = document.createElement("img");
-      img.src = result.info.secure_url;
-      img.loading = "lazy";
-      portfolioGrid.appendChild(img);
-    }
-  });
-});
-
 
 
