@@ -92,14 +92,22 @@
     max-height: 90%;
     overflow: auto;
 }
+.portfolio-grid {
+    display: grid;
+    /* По умолчанию 2 колонки на самых маленьких экранах */
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px;
+    width: 100%;
+}
 
+/* 2. Общие стили для картинок (чтобы всегда были ровные) */
 .portfolio-grid img {
     width: 100%;
-    aspect-ratio: 3 / 4; 
-    object-fit: cover; 
+    aspect-ratio: 1 / 1; /* Квадраты (или 3/4, если хотите прямоугольники) */
+    object-fit: cover;
     display: block;
     cursor: pointer;
-    border-radius: 4px; /* Опционально: скругление углов */
+    border-radius: 4px;
     transition: transform 0.2s;
 }
 
