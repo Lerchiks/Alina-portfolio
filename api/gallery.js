@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     secure: true 
   });
 
-  const FOLDER = "AlinaGallery"; // Убедись, что в Cloudinary папка называется именно так
+  const FOLDER = 'alina_gallery/AlinaGallery'; // Убедись, что в Cloudinary папка называется именно так
 
   try {
     const result = await cloudinary.api.resources({
