@@ -1,4 +1,6 @@
+
 {
+  "type": "module",
   "dependencies": {
     "cloudinary": "^2.9.0",
     "vercel": "^50.18.0"
