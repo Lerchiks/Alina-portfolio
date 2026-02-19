@@ -93,17 +93,18 @@
     overflow: auto;
 }
 
-.portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-}
-
 .portfolio-grid img {
     width: 100%;
-    height: auto;
+    aspect-ratio: 1 / 1; 
+    object-fit: cover; 
     display: block;
     cursor: pointer;
+    border-radius: 4px; /* Опционально: скругление углов */
+    transition: transform 0.2s;
+}
+
+.portfolio-grid img:hover {
+    transform: scale(1.02); /* Эффект при наведении */
 }
 
 @media (min-width: 768px) {

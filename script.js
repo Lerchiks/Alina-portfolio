@@ -124,7 +124,7 @@ const imageOverlay = imageModal.querySelector('.image-overlay');
 portfolioGrid.addEventListener('click', (e) => {
     if (e.target.tagName !== 'IMG') return;
 
-    if (window.innerWidth < 1200) return;
+    if (window.innerWidth < 800) return;
 
     imageModalImg.src = e.target.src;
     imageModal.classList.add('open');
