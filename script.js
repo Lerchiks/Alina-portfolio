@@ -63,34 +63,33 @@ const portfolioGrid = document.querySelector('.portfolio-grid');
 
 // Получаем галерею с сервера
 async function loadPortfolio() {
+  const portfolioGrid = document.querySelector('.portfolio-grid');
   if (!portfolioGrid) return;
 
   try {
     const res = await fetch('/api/gallery');
     const data = await res.json();
 
-    if (!data.images || !Array.isArray(data.images)) {
-      console.error('No images returned from /api/gallery');
+    if (!data.images || data.images.length === 0) {
+      portfolioGrid.innerHTML = '<p>Галерея пока пуста</p>';
       return;
     }
 
-    // очищаем grid
-    portfolioGrid.innerHTML = '';
+    portfolioGrid.innerHTML = ''; // Очищаем grid
 
-    // В loadPortfolio
     data.images.forEach(item => {
         const img = document.createElement('img');
-        img.src = item.url || item; // если приходит объект с url
+        img.src = item.url;
         img.alt = 'Portfolio image';
-        img.loading = 'lazy';
+        img.loading = 'lazy'; // Ленивая загрузка для скорости
         portfolioGrid.appendChild(img);
     });
   } catch (err) {
-    console.error('Failed to load portfolio:', err);
+    console.error('Ошибка загрузки:', err);
   }
 }
 
-// вызываем при загрузке страницы
+// Запускаем при загрузке
 loadPortfolio();
 
 
