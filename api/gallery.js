@@ -1,41 +1,53 @@
-import fetch from "node-fetch";
+import { v2 as cloudinary } from 'cloudinary';
 
 export default async function handler(req, res) {
-  const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
-  const API_KEY = process.env.CLOUDINARY_API_KEY;
-  const API_SECRET = process.env.CLOUDINARY_API_SECRET;
+  // Настройка Cloudinary
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+
   const FOLDER = "AlinaGallery";
 
-  if (!CLOUD_NAME || !API_KEY || !API_SECRET) {
+  if (!process.env.CLOUDINARY_CLOUD_NAME || 
+      !process.env.CLOUDINARY_API_KEY || 
+      !process.env.CLOUDINARY_API_SECRET) {
     return res.status(500).json({ error: "Missing Cloudinary env variables" });
   }
 
   try {
-    const auth = Buffer.from(`${API_KEY}:${API_SECRET}`).toString("base64");
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/resources/image?prefix=${FOLDER}`,
-      {
-        headers: {
-          Authorization: `Basic ${auth}`
-        }
-      }
-    );
+    // Получаем список изображений из указанной папки
+    const result = await cloudinary.api.resources({
+      type: 'upload',
+      prefix: FOLDER,
+      max_results: 500 // максимальное количество результатов
+    });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error("Cloudinary API error:", data);
-      return res.status(response.status).json({ error: "Cloudinary API error", details: data });
-    }
-
-    if (!data.resources || data.resources.length === 0) {
+    if (!result.resources || result.resources.length === 0) {
       return res.status(200).json({ images: [] });
     }
 
-    const images = data.resources.map(img => img.secure_url);
-    res.status(200).json({ images });
+    // Форматируем результат - получаем массив URL с оптимизациями
+    const images = result.resources.map(img => ({
+      url: img.secure_url,
+      public_id: img.public_id,
+      width: img.width,
+      height: img.height,
+      format: img.format,
+      created_at: img.created_at
+    }));
+
+    res.status(200).json({ 
+      images,
+      total: result.resources.length 
+    });
+    
   } catch (err) {
-    console.error("Server error fetching Cloudinary gallery:", err);
-    res.status(500).json({ error: "Cannot fetch gallery from Cloudinary", details: err.message });
+    console.error("Error fetching from Cloudinary:", err);
+    res.status(500).json({ 
+      error: "Cannot fetch gallery from Cloudinary", 
+      details: err.message 
+    });
   }
 }
