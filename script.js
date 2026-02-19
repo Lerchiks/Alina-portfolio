@@ -77,12 +77,13 @@ async function loadPortfolio() {
     // очищаем grid
     portfolioGrid.innerHTML = '';
 
-    data.images.forEach(src => {
-      const img = document.createElement('img');
-      img.src = src;
-      img.alt = 'Portfolio image';
-      img.loading = 'lazy';
-      portfolioGrid.appendChild(img);
+    // В loadPortfolio
+    data.images.forEach(item => {
+        const img = document.createElement('img');
+        img.src = item.url || item; // если приходит объект с url
+        img.alt = 'Portfolio image';
+        img.loading = 'lazy';
+        portfolioGrid.appendChild(img);
     });
   } catch (err) {
     console.error('Failed to load portfolio:', err);
