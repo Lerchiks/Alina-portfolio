@@ -1,4 +1,4 @@
-import { v2 as cloudinary } from 'cloudinary';
+  import { v2 as cloudinary } from 'cloudinary';
 
 export default async function handler(req, res) {
   cloudinary.config({
@@ -8,21 +8,33 @@ export default async function handler(req, res) {
     secure: true 
   });
 
+  // Вставь сюда ID своей коллекции, который ты нашла в URL
+  const COLLECTION_ID = "847e3689296261868901140ba6ad9748"; 
+
   try {
-    // Используем SEARCH вместо обычного RESOURCES
-    const result = await cloudinary.search
-      .expression('folder:AlinaGallery') // Ищет всё в папке AlinaGallery
-      .sort_by('created_at', 'desc')     // Сначала новые
-      .max_results(100)
-      .execute();
+    // Получаем ресурсы из конкретной коллекции
+    const result = await cloudinary.api.collection(COLLECTION_ID, {
+      max_results: 100
+    });
+
+    if (!result.resources) {
+      return res.status(200).json({ images: [] });
+    }
 
     const images = result.resources.map(img => ({
-      url: img.secure_url.replace('/upload/', '/upload/f_auto,q_auto,w_1000/'),
+      // Применяем ту же крутую оптимизацию
+      url: img.secure_url.replace('/upload/', '/upload/f_auto,q_auto,w_1000,c_limit/'),
       public_id: img.public_id
     }));
 
+    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
     return res.status(200).json({ images });
+
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.error("Collection Error:", err);
+    return res.status(500).json({ 
+      error: "Не удалось загрузить коллекцию", 
+      details: err.message 
+    });
   }
 }
