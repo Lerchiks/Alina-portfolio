@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     }));
 
     // Кэшируем ответ на 1 час, чтобы сайт летал
-    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
+    res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate');
     
     return res.status(200).json({ images });
 
