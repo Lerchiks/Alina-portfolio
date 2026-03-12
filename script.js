@@ -7,6 +7,19 @@ const modalPrice = modal.querySelector('.modal-price');
 const modalTextFirst = modal.querySelector('.modal-text-first');
 const modalTextSecond = modal.querySelector('.modal-text-second');
 
+const disableScroll = () => {
+    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.paddingRight = `${scrollBarWidth}px`;
+    document.body.style.overflow = 'hidden'; 
+    document.body.style.height = '100vh';
+};
+
+const enableScroll = () => {
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    document.body.style.height = '';
+};
+
 document.querySelectorAll('.service-content').forEach(service => {
     service.addEventListener('click', () => {
 
@@ -36,11 +49,13 @@ document.querySelectorAll('.service-content').forEach(service => {
         }
 
         modal.classList.add('active');
+        disableScroll();
     });
 });
 
 modal.querySelector('.modal-close').onclick = () => {
     modal.classList.remove('active');
+    enableScroll();
 };
 
 modal.querySelector('.modal-overlay').onclick = () => {
@@ -111,10 +126,12 @@ portfolio.addEventListener('click', openPortfolio);
 
 function openPortfolio() {
     portfolioModal.classList.add('open');
+    disableScroll();
 }
 
 overlay.addEventListener('click', () => {
     portfolioModal.classList.remove('open');
+    enableScroll();
 });
 
 const imageModal = document.getElementById('imageModal');
