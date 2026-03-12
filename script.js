@@ -7,17 +7,23 @@ const modalPrice = modal.querySelector('.modal-price');
 const modalTextFirst = modal.querySelector('.modal-text-first');
 const modalTextSecond = modal.querySelector('.modal-text-second');
 
+let scrollPosition = 0;
+
 const disableScroll = () => {
+    scrollPosition = window.pageYOffset;
+    
     const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
     document.body.style.paddingRight = `${scrollBarWidth}px`;
-    document.body.style.overflow = 'hidden'; 
-    document.body.style.height = '100vh';
+    
+    document.body.classList.add('lock-scroll');
+    document.body.style.top = `-${scrollPosition}px`;
 };
 
 const enableScroll = () => {
-    document.body.style.overflow = '';
+    document.body.classList.remove('lock-scroll');
     document.body.style.paddingRight = '';
-    document.body.style.height = '';
+    document.body.style.top = '';
+    window.scrollTo(0, scrollPosition);
 };
 
 document.querySelectorAll('.service-content').forEach(service => {
