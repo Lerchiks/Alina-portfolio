@@ -66,6 +66,7 @@ modal.querySelector('.modal-close').onclick = () => {
 
 modal.querySelector('.modal-overlay').onclick = () => {
     modal.classList.remove('active');
+    enableScroll();
 };
 
 const caret = document.querySelector('.caret');
@@ -155,6 +156,7 @@ portfolioGrid.addEventListener('click', (e) => {
 
 imageOverlay.addEventListener('click', () => {
     imageModal.classList.remove('open');
+    enableScroll();
 });
 
 
